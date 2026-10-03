@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#15160D">
+<title>Osama's Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+:root{
+ --cream:#B9AC84; --olive:#15160D; --oliveLight:#22240F; --magenta:#000000; --muted:#45432F;
+ --starA:#6E5F94; --starB:#4C8A78; --starC:#A2708A;
+}
+*{box-sizing:border-box; touch-action:manipulation;}
+html,body{margin:0;padding:0;}
+body{font-family:'Space Grotesk',system-ui,sans-serif; overflow-x:hidden;}
+.headline{font-family:'Anton',sans-serif; text-transform:uppercase; line-height:0.92; letter-spacing:0.5px; margin:0;}
+.chapter{padding:80px 24px 56px; position:relative; overflow:hidden;}
+.chapter.cream{background:var(--cream); color:var(--olive);}
+.chapter.olive{background:var(--olive); color:var(--cream);}
+.chlabel{position:absolute; bottom:18px; left:24px; font-size:11px; letter-spacing:2px; opacity:0.55; color:inherit;}
+.star{position:absolute; clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+.hidden{display:none!important;}
+.center{text-align:center;}
+.btn{background:var(--magenta); color:var(--cream); font-family:'Space Grotesk',sans-serif; font-weight:700;
+ border:none; border-radius:40px; padding:14px 28px; font-size:13px; letter-spacing:1.5px; text-transform:uppercase;
+ cursor:pointer; width:100%; transition:transform .15s;}
+.btn:active{transform:scale(0.96);}
+.btn-outline{background:transparent; border:2px solid currentColor; color:inherit;}
+.swipe-zone{position:relative; height:170px; margin:16px auto; max-width:380px;}
+#hh-card{position:absolute; inset:0; background:var(--cream); color:var(--olive); border-radius:16px;
+ display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; font-size:16px; font-weight:500;
+ cursor:grab; user-select:none; touch-action:none; box-shadow:0 10px 30px rgba(0,0,0,0.25);}
+#hh-card:active{cursor:grabbing;}
+.stamp{position:absolute; top:14px; font-size:14px; font-weight:bold; padding:4px 12px; border-radius:6px; border:2px solid; opacity:0; transition:opacity .05s;}
+.stamp-no{left:14px; color:#e35353; border-color:#e35353; transform:rotate(-12deg);}
+.stamp-yes{right:14px; color:#3fae6a; border-color:#3fae6a; transform:rotate(12deg);}
+.swipe-hint{opacity:0.7; font-size:12px; display:flex; gap:24px; justify-content:center; margin-top:14px;}
+.scratch-wrap{position:relative; max-width:420px; margin:20px auto; height:340px; border-radius:16px; box-shadow:0 14px 34px rgba(0,0,0,0.18);}
+canvas#scratchCanvas{position:absolute; inset:0; width:100%; height:100%; border-radius:16px; touch-action:none;}
+#revealMsg{position:absolute; inset:0; padding:22px; display:flex; align-items:center; justify-content:center; text-align:center;
+ font-size:13px; line-height:1.5; background:var(--cream); color:var(--olive); border-radius:16px;}
+#resultImg{width:110px; height:110px; object-fit:cover; border-radius:50%; border:3px solid var(--magenta); margin:12px auto; display:block;}
+.videoBox{max-width:460px; margin:0 auto; border-radius:16px; overflow:hidden; box-shadow:0 14px 34px rgba(0,0,0,0.3);}
+video#birthdayVideo{display:block; width:100%; max-height:70vh; background:#000;}
+.spark{position:fixed; width:6px; height:6px; border-radius:50%; pointer-events:none; z-index:500; transform:translate(-50%,-50%); animation:sparkFade .7s ease-out forwards;}
+@keyframes sparkFade{0%{opacity:1; transform:translate(-50%,-50%) scale(1);} 100%{opacity:0; transform:translate(-50%,-50%) scale(0.2) translateY(-20px);}}
+@keyframes popIn{0%{transform:scale(0.7); opacity:0.3;} 100%{transform:scale(1); opacity:1;}}
+</style>
+</head>
+<body>
+
+<div class="chapter cream center" id="ch1">
+ <div style="display:flex; gap:10px; justify-content:center; margin-bottom:26px;">
+ <div class="star" style="width:16px;height:16px;background:var(--magenta);"></div>
+ <div class="star" style="width:22px;height:22px;background:var(--starA);"></div>
+ <div class="star" style="width:16px;height:16px;background:var(--magenta);"></div>
+ </div>
+ <h1 class="headline" style="font-size:13vw; max-width:420px; margin:0 auto; color:var(--magenta);">OSAMA</h1>
+ <p style="max-width:340px; margin:22px auto; color:var(--muted); font-size:15px;">A tiny corner of the internet, built just for Osama's birthday. Scroll down. Hunch Hound wants to read your mind.</p>
+ <div style="max-width:220px; margin:0 auto;">
+ <button class="btn" onclick="beginJourney()">Begin ↓</button>
+ </div>
+ <span class="chlabel">CH.01 / WELCOME</span>
+</div>
+
+<div class="chapter olive" id="ch2">
+ <h2 class="headline" style="font-size:9vw; max-width:420px;">GUESS WHO</h2>
+ <p style="max-width:380px; opacity:0.85; margin:16px 0 28px; font-size:14px;">Think of a character, real, fictional, doesn't matter. Answer honestly. Hunch Hound always knows.</p>
+ <div id="hh-start">
+ <div style="max-width:240px;"><button class="btn" onclick="startQuiz()">Start Guessing</button></div>
+ </div>
+ <div id="hh-quiz" class="hidden">
+ <div class="swipe-zone">
+ <span class="stamp stamp-no" id="stampNo">NO</span>
+ <span class="stamp stamp-yes" id="stampYes">YES</span>
+ <div id="hh-card"><span id="hh-question"></span></div>
+ </div>
+ <div class="swipe-hint"><span>01 / swipe left: no</span><span>02 / swipe right: yes</span></div>
+ </div>
+ <div id="hh-result" class="hidden center" style="max-width:380px;"></div>
+ <span class="chlabel">CH.02 / HUNCH HOUND</span>
+</div>
+
+<div class="chapter cream center" id="ch3">
+ <div style="position:relative; display:inline-block;">
+ <div class="star" style="width:14px;height:14px;background:var(--starB); top:-16px; left:-26px;"></div>
+ <div class="star" style="width:20px;height:20px;background:var(--magenta); top:10px; right:-30px;"></div>
+ <div class="star" style="width:12px;height:12px;background:var(--starA); bottom:-10px; left:0;"></div>
+ <h2 class="headline" style="font-size:11vw;">SCRATCH<br>&amp; REVEAL</h2>
+ </div>
+ <p style="max-width:320px; margin:18px auto 24px; color:var(--muted); font-size:14px;">Drag a finger across the card below.</p>
+ <div class="scratch-wrap">
+ <div id="revealMsg">Happy birthday, Osama. It's crazy that four years later, you're still such an important person in my life. I'm genuinely grateful our paths crossed and that I get to call you my friend. I hope this year brings you so much happiness (me), peace, good health and plenty of reasons to smile. Hope you have the happiest birthday and feel extra loved today.</div>
+ <canvas id="scratchCanvas"></canvas>
+ </div>
+ <span class="chlabel">CH.03 / SCRATCH CARD</span>
+</div>
+
+<div class="chapter olive" id="ch4">
+ <h2 class="headline" style="font-size:9vw; max-width:420px;">ONE MORE<br>THING</h2>
+ <p style="opacity:0.85; font-size:14px; max-width:380px; margin:14px 0 26px;">A little video, just for you.</p>
+ <div class="videoBox">
+ <video id="birthdayVideo" controls playsinline>
+ <source src="video.mp4" type="video/mp4">
+ </video>
+ </div>
+ <span class="chlabel">CH.04 / FOR YOU</span>
+</div>
+
+<div class="chapter cream center" id="ch5">
+ <div class="star" style="width:16px;height:16px;background:var(--starA); top:40px; left:12%;"></div>
+ <div class="star" style="width:12px;height:12px;background:var(--magenta); top:90px; right:14%;"></div>
+ <div class="star" style="width:20px;height:20px;background:var(--starB); bottom:120px; left:18%;"></div>
+ <div class="star" style="width:14px;height:14px;background:var(--starC); bottom:60px; right:10%;"></div>
+ <h2 class="headline" style="font-size:12vw; position:relative; z-index:1;">HAPPY<br>BIRTHDAY<br>OSAMA</h2>
+ <p id="hypeText" style="max-width:320px; margin:22px auto; font-size:15px; color:var(--muted); position:relative; z-index:1;">Tap below for your fate.</p>
+ <div style="max-width:260px; margin:0 auto; position:relative; z-index:1;">
+ <button class="btn" onclick="hypeMe()">Consult Awesome Sauce</button>
+ </div>
+ <p style="margin-top:30px; font-size:11px; letter-spacing:1.5px; text-decoration:underline; opacity:0.6; position:relative; z-index:1;">SHAKE YOUR PHONE FOR ONE LAST SURPRISE</p>
+ <span class="chlabel">CH.05 / FOR OSAMA</span>
+</div>
+
+<script>
+const OSAMA_PHOTO_URL = 'osama.jpg';
+const ME_PHOTO_URL = 'me.jpg';
+
+// ---------- AUDIO ----------
+let actx;
+function initAudio(){ if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)(); }
+function beep(freq=440, dur=0.08, type='square', vol=0.15){
+ if(!actx) initAudio();
+ const o=actx.createOscillator(), g=actx.createGain();
+ o.type=type; o.frequency.value=freq; g.gain.value=vol;
+ o.connect(g); g.connect(actx.destination);
+ o.start(); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+dur);
+ o.stop(actx.currentTime+dur);
+}
+function playClick(){ beep(600,0.06,'square',0.12); }
+let lastScratchSound=0;
+function playScratch(){
+ const now=Date.now(); if(now-lastScratchSound<60) return; lastScratchSound=now;
+ if(!actx) return;
+ const bufferSize=actx.sampleRate*0.05;
+ const buffer=actx.createBuffer(1,bufferSize,actx.sampleRate);
+ const data=buffer.getChannelData(0);
+ for(let i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1)*0.3;
+ const noise=actx.createBufferSource(); noise.buffer=buffer;
+ const g=actx.createGain(); g.gain.value=0.12;
+ noise.connect(g); g.connect(actx.destination); noise.start();
+}
+function playVictory(){
+ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,0.15,'square',0.15), i*100));
+}
+function beginJourney(){
+ playClick();
+ confetti({particleCount:100, spread:80, colors:['#000000','#6E5F94','#4C8A78'], origin:{y:0.4}});
+ document.getElementById('ch2').scrollIntoView({behavior:'smooth'});
+}
+
+// ---------- HUNCH HOUND ----------
+const OSAMA_TRAITS = [
+ "Do they bench 140kg?",
+ "Do they play football?",
+ "Do they hit the gym & have huge biceps?"
+];
+const ME_TRAITS = [
+ "Do they hit the gym?",
+ "Is this character super important?",
+ "Is awesome sauce involved?",
+ "Does this character like French fries?"
+];
+const NEUTRAL_EXTRA = [
+ "Have you two even met in person?",
+ "Could they be a well-dressed Roomba for all you actually know?",
+ "Is there a real chance you'd walk right past them at the airport?",
+ "Do they only exist as a profile picture and vibes?",
+ "Have they ever left you on read way longer than friends should?",
+ "Is this person possibly just Wi-Fi signal and good intentions?",
+ "Do they type in all lowercase like it's a personality trait?",
+ "Would meeting them in real life change the group chat forever?",
+ "Is 3am their most productive hour?"
+];
+function shuffle(arr){
+ const a = arr.slice();
+ for(let i=a.length-1;i>0;i--){
+ const j = Math.floor(Math.random()*(i+1));
+ [a[i],a[j]] = [a[j],a[i]];
+ }
+ return a;
+}
+let QUESTIONS = [];
+let hhState = {step:0, scoreOsama:0, scoreMe:0};
+function startQuiz(){
+ playClick();
+ const picked = [
+ ...shuffle(OSAMA_TRAITS).slice(0,2).map(t=>({text:t, type:'osama'})),
+ ...shuffle(ME_TRAITS).slice(0,2).map(t=>({text:t, type:'me'})),
+ {text: shuffle(NEUTRAL_EXTRA)[0], type:'neutral'}
+ ];
+ QUESTIONS = [{text:"Is this character real?", type:'neutral'}, ...shuffle(picked)];
+ hhState = {step:0, scoreOsama:0, scoreMe:0};
+ document.getElementById('hh-start').classList.add('hidden');
+ document.getElementById('hh-quiz').classList.remove('hidden');
+ document.getElementById('hh-result').classList.add('hidden');
+ showQuestion();
+ if(!swipeReady){ setupSwipe(); swipeReady = true; }
+}
+function showQuestion(){
+ document.getElementById('hh-question').textContent = QUESTIONS[hhState.step].text;
+}
+function setupSwipe(){
+ const card = document.getElementById('hh-card');
+ const stampYes = document.getElementById('stampYes');
+ const stampNo = document.getElementById('stampNo');
+ let startX=0, curX=0, dragging=false;
+ function down(e){ dragging=true; startX=e.clientX; card.style.transition='none'; card.setPointerCapture(e.pointerId); }
+ function move(e){
+ if(!dragging) return;
+ curX = e.clientX - startX;
+ card.style.transform = `translateX(${curX}px) rotate(${curX/20}deg)`;
+ stampYes.style.opacity = curX>30 ? Math.min(curX/80,1) : 0;
+ stampNo.style.opacity = curX<-30 ? Math.min(-curX/80,1) : 0;
+ }
+ function up(){
+ if(!dragging) return;
+ dragging=false;
+ card.style.transition='transform .25s';
+ if(curX > 80){
+ card.style.transform = `translateX(600px) rotate(30deg)`;
+ setTimeout(()=>answer(true), 200);
+ } else if(curX < -80){
+ card.style.transform = `translateX(-600px) rotate(-30deg)`;
+ setTimeout(()=>answer(false), 200);
+ } else {
+ card.style.transform = 'translateX(0) rotate(0)';
+ stampYes.style.opacity=0; stampNo.style.opacity=0;
+ }
+ curX = 0;
+ }
+ card.addEventListener('pointerdown', down);
+ card.addEventListener('pointermove', move);
+ card.addEventListener('pointerup', up);
+ card.addEventListener('pointercancel', up);
+}
+let swipeReady = false;
+function answer(val){
+ playClick();
+ const card = document.getElementById('hh-card');
+ card.style.transition='none'; card.style.transform='translateX(0) rotate(0)';
+ document.getElementById('stampYes').style.opacity=0;
+ document.getElementById('stampNo').style.opacity=0;
+ if(val){
+ const t = QUESTIONS[hhState.step].type;
+ if(t==='osama') hhState.scoreOsama++;
+ else if(t==='me') hhState.scoreMe++;
+ }
+ hhState.step++;
+ if(hhState.step >= QUESTIONS.length){
+ finishQuiz();
+ } else {
+ showQuestion();
+ }
+}
+function finishQuiz(){
+ document.getElementById('hh-quiz').classList.add('hidden');
+ const resultDiv = document.getElementById('hh-result');
+ resultDiv.classList.remove('hidden');
+ playVictory();
+ confetti({particleCount:150, spread:100, colors:['#000000','#6E5F94','#4C8A78'], origin:{y:0.5}});
+ if(hhState.scoreOsama > hhState.scoreMe){
+ resultDiv.innerHTML = `<img id="resultImg" src="${OSAMA_PHOTO_URL}" onerror="this.style.display='none'"><h3>IT'S YOU!</h3><p>Hardworking, strong, and one of the most dedicated friends around. Happy birthday, legend.</p>`;
+ } else if(hhState.scoreMe > 0){
+ resultDiv.innerHTML = `<img id="resultImg" src="${ME_PHOTO_URL}" onerror="this.style.display='none'"><h3>EASY ONE!</h3><p>I knew it! You were thinking of me all along.</p>`;
+ } else {
+ resultDiv.innerHTML = `<img id="resultImg" src="${ME_PHOTO_URL}" onerror="this.style.display='none'"><h3>HUNCH HOUND OVERRIDE!</h3><p>Wait... none of that matched? Error! Hunch Hound scanned your brain data anyway: you were 100% thinking of me. Don't lie to yourself!</p>`;
+ }
+ resultDiv.innerHTML += `<div style="max-width:220px;margin:14px auto 0;"><button class="btn btn-outline" onclick="resetQuiz()">Try Again</button></div>`;
+}
+function resetQuiz(){
+ document.getElementById('hh-result').classList.add('hidden');
+ document.getElementById('hh-start').classList.remove('hidden');
+}
+
+// ---------- SCRATCH CARD ----------
+function setupScratch(){
+ requestAnimationFrame(()=>{
+ const canvas = document.getElementById('scratchCanvas');
+ const rect = canvas.parentElement.getBoundingClientRect();
+ const w = Math.max(rect.width, 280);
+ canvas.width = w; canvas.height = rect.height || 340;
+ canvas.style.touchAction = 'none';
+ const ctx = canvas.getContext('2d');
+ ctx.fillStyle = '#15160D';
+ ctx.fillRect(0,0,canvas.width,canvas.height);
+ for(let i=0;i<500;i++){
+ ctx.fillStyle = Math.random()>0.5 ? '#000000' : '#6E5F94';
+ ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 3, 3);
+ }
+ ctx.fillStyle = '#B9AC84';
+ ctx.font = 'bold 28px Anton, sans-serif';
+ ctx.textAlign = 'center';
+ ctx.fillText('SCRATCH', canvas.width/2, canvas.height/2 - 14);
+ ctx.fillText('TO REVEAL', canvas.width/2, canvas.height/2 + 24);
+ ctx.globalCompositeOperation = 'destination-out';
+
+ let drawing = false;
+ function scratchAt(x,y){
+ ctx.beginPath(); ctx.arc(x,y,24,0,Math.PI*2); ctx.fill();
+ playScratch();
+ }
+ function getPos(e){
+ const r = canvas.getBoundingClientRect();
+ return {x: e.clientX-r.left, y: e.clientY-r.top};
+ }
+ canvas.addEventListener('pointerdown', e=>{
+ drawing=true;
+ canvas.setPointerCapture(e.pointerId);
+ const p=getPos(e); scratchAt(p.x,p.y);
+ });
+ canvas.addEventListener('pointermove', e=>{
+ if(!drawing) return;
+ const p=getPos(e); scratchAt(p.x,p.y);
+ });
+ canvas.addEventListener('pointerup', ()=>drawing=false);
+ canvas.addEventListener('pointercancel', ()=>drawing=false);
+ });
+}
+
+// ---------- SHAKE TO CELEBRATE ----------
+let lastShake = 0, lastX, lastY, lastZ;
+function handleMotion(e){
+ const a = e.accelerationIncludingGravity;
+ if(!a) return;
+ const now = Date.now();
+ if(now - lastShake < 1000) return;
+ if(lastX !== undefined){
+ const delta = Math.abs(a.x-lastX)+Math.abs(a.y-lastY)+Math.abs(a.z-lastZ);
+ if(delta > 30){
+ lastShake = now;
+ confetti({particleCount:200, spread:120, colors:['#000000','#6E5F94','#4C8A78','#A2708A'], origin:{y:0.4}});
+ }
+ }
+ lastX=a.x; lastY=a.y; lastZ=a.z;
+}
+if(typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'){
+ document.addEventListener('click', function reqMotion(){
+ DeviceMotionEvent.requestPermission().then(state=>{
+ if(state==='granted') window.addEventListener('devicemotion', handleMotion);
+ }).catch(()=>{});
+ document.removeEventListener('click', reqMotion);
+ }, {once:true});
+} else if(typeof DeviceMotionEvent !== 'undefined'){
+ window.addEventListener('devicemotion', handleMotion);
+}
+
+// ---------- ORACLE OF HYPE ----------
+const HYPE_LINES = [
+ "Awesome Sauce says your next lift is a new PR.",
+ "Awesome Sauce predicts fries in your near future.",
+ "Awesome Sauce sees four more years of chaos, minimum.",
+ "Your aura is giving main character energy tonight.",
+ "Awesome Sauce has spoken: you are, in fact, that guy.",
+ "Awesome Sauce says someone owes you the aux cord.",
+ "Awesome Sauce foresees a comeback nobody saw coming.",
+ "Tonight's forecast: 100% chance of being iconic.",
+ "Awesome Sauce senses big gym gains on the horizon.",
+ "Awesome Sauce whispers: happy birthday, legend."
+];
+function hypeMe(){
+ playClick();
+ const el = document.getElementById('hypeText');
+ el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'popIn .3s ease';
+ el.textContent = HYPE_LINES[Math.floor(Math.random()*HYPE_LINES.length)];
+ confetti({particleCount:40, spread:60, colors:['#000000','#6E5F94','#4C8A78'], origin:{y:0.6}});
+}
+
+// ---------- SPARKLE TRAIL ----------
+let lastSpark = 0;
+const SPARK_COLORS = ['#000000','#6E5F94','#4C8A78','#A2708A'];
+function spawnSpark(x,y){
+ const now = Date.now();
+ if(now - lastSpark < 45) return;
+ lastSpark = now;
+ const s = document.createElement('div');
+ s.className = 'spark';
+ s.style.left = x+'px'; s.style.top = y+'px';
+ s.style.background = SPARK_COLORS[Math.floor(Math.random()*SPARK_COLORS.length)];
+ document.body.appendChild(s);
+ setTimeout(()=>s.remove(), 700);
+}
+window.addEventListener('pointermove', e=>spawnSpark(e.clientX, e.clientY));
+setupScratch();
+</script>
+</body>
+</html>
